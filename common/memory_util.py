@@ -16,18 +16,19 @@ def get_memory_usage(pandas_obj):
     return "{:03.2f} MB".format(usage_mb)
 
 
-def optimize_dataframe_datatype(pandas_df, fill_missing):
+def optimize_dataframe_datatype(pandas_df, fill_missing, drop_missing):
     """
     optimize the data type of DataFrame to decrease memory usage
     :param pandas_df: pandas DataFrame
     :param fill_missing: bool tag of whether to fill missing values
+    :param drop_missing: bool tag of whether to drop missing values
     :return: optimized DataFrame
     """
-    # True: fill all missing values with 0
+    # fill all missing values with 0
     if fill_missing is True:
         pandas_df.fillna(0, inplace=True)
-    # False: drop all rows which contain missing values
-    else:
+    # drop all rows which contain missing values
+    if drop_missing is True:
         pandas_df.dropna(axis=0, how='any')
     print('Original Memory Usage: ', get_memory_usage(pandas_df))
 

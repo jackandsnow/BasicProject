@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 
 from sklearn.preprocessing import LabelEncoder, OneHotEncoder
 
@@ -43,12 +44,12 @@ def feature_extract_by_sklearn(pandas_df, col_names):
     """
     extract features by sklearn tool of pandas DataFrame at specific columns
     :param pandas_df: pandas DataFrame
-    :param col_names: names of specific columns, like ['uId', 'gender', 'age', ...]
+    :param col_names: names of specific columns, like ['group', 'city', ...]
     :return: features array
     """
     feature_array = []
     # optimize the data type, and fill missing value with 0
-    pandas_df = optimize_dataframe_datatype(pandas_df, fill_missing=True)
+    pandas_df = optimize_dataframe_datatype(pandas_df, fill_missing=True, drop_missing=False)
     for col_name in col_names:
         # integer encode
         pandas_df[col_name] = LabelEncoder().fit_transform(pandas_df[col_name].values)
@@ -61,3 +62,18 @@ def feature_extract_by_sklearn(pandas_df, col_names):
         else:
             feature_array = col_feature.toarray()
     return feature_array
+
+
+def feature_extract(pandas_df, feature_cols):
+    """
+    extract features of pandas DataFrame at feature columns
+    :param pandas_df: pandas DataFrame
+    :param feature_cols: names of feature columns, like ['feature1_col', 'feature2_col', ...]
+    :return: feature DataFrame
+    """
+    # OPTIONAL: optimize the data type, and fill missing value with 0
+    #   if you want the feature of 'NaN', then execute 'optimize_dataframe_datatype' function
+    # pandas_df = optimize_dataframe_datatype(pandas_df, fill_missing=True, drop_missing=False)
+    feature_df = pd.get_dummies(pandas_df[feature_cols], columns=feature_cols)
+    # print(feature_df.shape)
+    return feature_df
