@@ -32,16 +32,19 @@ def get_url_text(url, total=3):
     get the text of target url
     :param url: target url
     :param total: repeat times if time out
-    :return: html text
+    :return: html text or None
     """
     try:
         headers = {'User-Agent': random.choice(agent)}
         r = requests.get(url, headers=headers, timeout=5)
-    except Exception as e:
+    except requests.exceptions.ConnectionError:  # connection error
+        print('Connection Error:', url)
+        return None
+    except Exception:
         if total > 0:
-            time.sleep(5)   # after 5 seconds continue to craw
+            time.sleep(5)  # after 5 seconds continue to craw
             return get_url_text(url, total - 1)
-        return False
+        return None
     # get encodings of the website
     encodings = requests.utils.get_encodings_from_content(r.text)
     if len(encodings) == 0:
