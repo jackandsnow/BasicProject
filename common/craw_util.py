@@ -27,23 +27,25 @@ agent = [
 ]
 
 
-def get_url_text(url, total=3):
+def get_html_text(url, params=None, proxies=None, total=3):
     """
     get the text of target url
     :param url: target url
+    :param params: params
+    :param proxies: proxies
     :param total: repeat times if time out
     :return: html text or None
     """
     try:
         headers = {'User-Agent': random.choice(agent)}
-        r = requests.get(url, headers=headers, timeout=5)
+        r = requests.get(url, params=params, proxies=proxies, headers=headers, timeout=5)
     except requests.exceptions.ConnectionError:  # connection error
         print('Connection Error:', url)
         return None
     except Exception:
         if total > 0:
             time.sleep(5)  # after 5 seconds continue to craw
-            return get_url_text(url, total - 1)
+            return get_html_text(url, params, proxies, total - 1)
         return None
     # get encodings of the website
     encodings = requests.utils.get_encodings_from_content(r.text)
@@ -51,5 +53,4 @@ def get_url_text(url, total=3):
         r.encoding = 'gbk'
     else:
         r.encoding = encodings[0]
-    # return html text
     return r.text
