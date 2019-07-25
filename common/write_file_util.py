@@ -1,3 +1,4 @@
+import json
 import pickle
 
 
@@ -47,3 +48,29 @@ def load_multi_pkl_file(file_name_list):
         p.close()
     print('*************** Load Data From Multi-pkl Files Finished *************')
     return all_data
+
+
+def write_json_file(filename, data):
+    """
+    write data to json file
+    :param filename: json filename, like '/path/filename.json'
+    :param data: data for writing
+    :return: None
+    """
+    fp = open(filename, mode='w', encoding='utf-8')
+    json.dump(data, fp, ensure_ascii=False)
+    fp.close()
+
+
+def write_txt_file(filename, data_list):
+    """
+    write data to text file
+    :param filename: txt filename, like '/path/filename.txt'
+    :param data_list: data list for writing, like '[title, date, content, ...]'
+    :return: None
+    """
+    fp = open(filename, mode='w', encoding='utf-8')
+    for data in data_list:
+        fp.write(data)
+        fp.write('\n\n')
+    fp.close()
