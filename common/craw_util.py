@@ -31,8 +31,8 @@ def get_html_text(url, params=None, proxies=None, total=3):
     """
     get the text of target url
     :param url: target url
-    :param params: params
-    :param proxies: proxies
+    :param params: params dict, like {'param1': 'value1', 'param2': 'value2'}
+    :param proxies: proxies dict, like {'http': 'proxy1', 'https': proxy2}, its keys are unchangeable
     :param total: repeat times if time out
     :return: html text or None
     """
