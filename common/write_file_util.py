@@ -1,6 +1,8 @@
 import json
 import pickle
 
+import docx
+
 
 def save_pkl_file(save_data, file_name):
     """
@@ -74,3 +76,19 @@ def write_txt_file(filename, data_list):
         fp.write(data)
         fp.write('\n\n')
     fp.close()
+
+
+def write_word_file(filename, title, data_list):
+    """
+    write text data to word file
+    :param filename: word filename, like '/path/filename.doc' or '/path/filename.docx'
+    :param title: title for word file, or maybe None
+    :param data_list: paragraphs of word content
+    :return: None
+    """
+    doc = docx.Document()
+    if title:
+        doc.add_heading(title, 0)
+    for data in data_list:
+        doc.add_paragraph(data)
+    doc.save(filename)
