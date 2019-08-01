@@ -2,6 +2,8 @@ import json
 import pickle
 
 import docx
+import pandas as pd
+from openpyxl import load_workbook
 
 
 def save_pkl_file(save_data, file_name):
@@ -92,3 +94,20 @@ def write_word_file(filename, title, data_list):
     for data in data_list:
         doc.add_paragraph(data)
     doc.save(filename)
+
+
+def write_excel_file(filename, data_list, sheet_name='Sheet1', columns=None):
+    """
+    write list data to excel file, supporting add new sheet
+    :param filename: excel filename, like '/path/filename.xls'
+    :param data_list: list data for saving
+    :param sheet_name: excel sheet name, default 'Sheet1'
+    :param columns: excel column names
+    :return: None
+    """
+    writer = pd.ExcelWriter(filename)
+    frame = pd.DataFrame(data_list, columns=columns)
+    book = load_workbook(writer.path)
+    writer.book = book
+    frame.to_excel(excel_writer=writer, sheet_name=sheet_name, index=None)
+    writer.close()

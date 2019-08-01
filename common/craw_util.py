@@ -54,3 +54,23 @@ def get_html_text(url, params=None, proxies=None, total=3):
     else:
         r.encoding = encodings[0]
     return r.text
+
+
+def download_file(file_url, filename, total=3):
+    """
+    download file
+    :param file_url: file URL
+    :param filename: filename
+    :param total: max download times
+    :return: bool flag of success
+    """
+    try:
+        res = requests.get(file_url)
+        fp = open(filename, mode='wb')
+        fp.write(res.content)
+        fp.close()
+    except Exception:
+        if total > 0:
+            return download_file(file_url, filename, total - 1)
+        return False
+    return True
