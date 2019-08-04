@@ -99,7 +99,8 @@ def write_word_file(filename, title, data_list):
 def write_excel_file(filename, data_list, sheet_name='Sheet1', columns=None):
     """
     write list data to excel file, supporting add new sheet
-    :param filename: excel filename, like '/path/filename.xls'
+    Attention: you should create the excel file named 'filename' manually
+    :param filename: excel filename, like '/path/filename.xls' or '/path/filename.xlsx'
     :param data_list: list data for saving
     :param sheet_name: excel sheet name, default 'Sheet1'
     :param columns: excel column names

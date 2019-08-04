@@ -58,7 +58,7 @@ def get_html_text(url, params=None, proxies=None, total=3):
 
 def download_file(file_url, filename, total=3):
     """
-    download file
+    download file, such as word, excel, ppt, pdf, mp4 file, etc.
     :param file_url: file URL
     :param filename: filename
     :param total: max download times
