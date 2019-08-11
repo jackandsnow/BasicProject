@@ -1,6 +1,10 @@
 import json
 import pickle
 
+import docx
+import pandas as pd
+from openpyxl import load_workbook
+
 
 def save_pkl_file(save_data, file_name):
     """
@@ -74,3 +78,37 @@ def write_txt_file(filename, data_list):
         fp.write(data)
         fp.write('\n\n')
     fp.close()
+
+
+def write_word_file(filename, title, data_list):
+    """
+    write text data to word file
+    :param filename: word filename, like '/path/filename.doc' or '/path/filename.docx'
+    :param title: title for word file, or maybe None
+    :param data_list: paragraphs of word content
+    :return: None
+    """
+    doc = docx.Document()
+    if title:
+        doc.add_heading(title, 0)
+    for data in data_list:
+        doc.add_paragraph(data)
+    doc.save(filename)
+
+
+def write_excel_file(filename, data_list, sheet_name='Sheet1', columns=None):
+    """
+    write list data to excel file, supporting add new sheet
+    Attention: you should create the excel file named 'filename' manually
+    :param filename: excel filename, like '/path/filename.xls' or '/path/filename.xlsx'
+    :param data_list: list data for saving
+    :param sheet_name: excel sheet name, default 'Sheet1'
+    :param columns: excel column names
+    :return: None
+    """
+    writer = pd.ExcelWriter(filename)
+    frame = pd.DataFrame(data_list, columns=columns)
+    book = load_workbook(writer.path)
+    writer.book = book
+    frame.to_excel(excel_writer=writer, sheet_name=sheet_name, index=None)
+    writer.close()
