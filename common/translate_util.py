@@ -72,6 +72,9 @@ def ciba_translate(text):
     # from lang: auto, to lang: zh-CN
     params = {'f': 'auto', 't': 'zh-CN', 'w': text}
     res = requests.get(ciba, params).json()
+    # the same language, not to translate
+    if res.get('from') == res.get('to'):
+        return text
     if res.get('status') == 0:
         meaning = res.get('content').get('word_mean')
         return meaning[0]
