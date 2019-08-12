@@ -1,23 +1,29 @@
 import datetime
 
 
-def date_to_string(date, n=0):
+def date_to_string(date, fmt=None, n=0):
     """
     transfer datetime to string
     :param date: datetime
-    :param n: format index from 0 to 3
+    :param fmt: self defined format, like '%Y%m%d', etc.
+    :param n: format list index from 0 to 3
     :return: string
     """
-    fmt = ['%Y/%m/%d', '%Y-%m-%d', '%Y/%m/%d %H:%M:%S', '%Y-%m-%d %H:%M:%S']
-    return date.strftime(fmt[n])
+    format_list = ['%Y/%m/%d', '%Y-%m-%d', '%Y/%m/%d %H:%M:%S', '%Y-%m-%d %H:%M:%S']
+    if not fmt:
+        fmt = format_list[n]
+    return date.strftime(fmt)
 
 
-def string_to_date(date_str, n=0):
+def string_to_date(date_str, fmt=None, n=0):
     """
     transfer string to datetime
     :param date_str: string
-    :param n: format index from 0 to 3
+    :param fmt: self defined format, like '%Y%m%d', etc.
+    :param n: format list index from 0 to 3
     :return: datetime
     """
-    fmt = ['%Y/%m/%d', '%Y-%m-%d', '%Y/%m/%d %H:%M:%S', '%Y-%m-%d %H:%M:%S']
-    return datetime.datetime.strptime(date_str, fmt[n])
+    format_list = ['%Y/%m/%d', '%Y-%m-%d', '%Y/%m/%d %H:%M:%S', '%Y-%m-%d %H:%M:%S']
+    if not fmt:
+        fmt = format_list[n]
+    return datetime.datetime.strptime(date_str, fmt)
