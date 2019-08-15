@@ -53,7 +53,7 @@ def get_html_text(url, params=None, proxies=None, total=3):
         r.encoding = 'gbk'
     else:
         r.encoding = encodings[0]
-    return r.text
+    return r.content
 
 
 def download_file(file_url, filename, total=3):
