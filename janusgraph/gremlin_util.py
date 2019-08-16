@@ -1,6 +1,5 @@
 from gremlin_python.driver.driver_remote_connection import DriverRemoteConnection
 from gremlin_python.process.anonymous_traversal import traversal
-from gremlin_python.process.traversal import Bindings
 
 graph = traversal().withRemote(DriverRemoteConnection('ws://127.0.0.1:8182/gremlin', 'g'))
 
@@ -30,7 +29,7 @@ def add_edge(graph, label, v_from, v_to, properties=None):
     :param properties: property dict, like {'p1': 'value1', 'p2': 'value2'}
     :return: None
     """
-    edge = graph.V(Bindings.of('id', v_from)).addE(label).to(v_to)
+    edge = graph.V(v_from).addE(label).to(v_to)
     if properties:
         for key in properties.keys():
             edge.property(key, properties.get(key))
@@ -77,3 +76,41 @@ def drop_edge(graph, label=None, properties=None):
             else:
                 travel = travel.has(p)
     travel.drop().iterate()
+
+
+def query_id_list(graph, label=None):
+    """
+    query id list
+    :param graph: graph, type: GraphTraversalSource
+    :param label: label, type: str
+    :return: long(id) list, like [long_id1, long_id2, long_id3]
+    """
+    travel = graph.V()
+    if label:
+        travel = travel.hasLabel(label)
+    return travel.id().toList()
+
+
+def query(graph, v_id=None, label=None, properties=None):
+    """
+    query graph data list
+    :param graph: graph, type: GraphTraversalSource
+    :param v_id: vertex id, type: long
+    :param label: label, type: str
+    :param properties: property list, like ['p1', 'p2', {'p3': 'value'}]
+    :return: valueMap list
+    """
+    if v_id:
+        travel = graph.V(v_id)
+    else:
+        travel = graph.V()
+    if label:
+        travel = travel.hasLabel(label)
+    if properties:
+        for p in properties:
+            if isinstance(p, dict):
+                key = list(p.keys())[0]
+                travel = travel.has(key, p.get(key))
+            else:
+                travel = travel.has(p)
+    return travel.valueMap().toList()
