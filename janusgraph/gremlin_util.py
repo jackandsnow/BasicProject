@@ -6,10 +6,10 @@ graph = traversal().withRemote(DriverRemoteConnection('ws://127.0.0.1:8182/greml
 
 def vertex_to_dict(graph, vertex):
     """
-
+    transfer Vertex's info to dict
     :param graph: graph, type: GraphTraversalSource
     :param vertex: vertex, Vertex(id, label)
-    :return:
+    :return: vertex info dict
     """
     properties = graph.V(vertex).valueMap().toList()[0]
     for key in properties.keys():
@@ -17,6 +17,22 @@ def vertex_to_dict(graph, vertex):
     return {
         'id': vertex.id,
         'label': vertex.label,
+        'properties': properties
+    }
+
+
+def edge_to_dict(graph, edge):
+    """
+    transfer Edge's info to dict
+    :param graph: graph, type: GraphTraversalSource
+    :param edge: edge, Edge(id, label, outV, inV)
+    :return: edge info dict
+    """
+    e_id = edge.id.get('@value').get('relationId')
+    properties = graph.E(e_id).valueMap().toList()[0]
+    return {
+        'id': e_id,
+        'label': edge.label,
         'properties': properties
     }
 
@@ -76,15 +92,16 @@ def drop_vertex(graph, v_id=None, label=None, properties=None):
     travel.drop().iterate()
 
 
-def drop_edge(graph, label=None, properties=None):
+def drop_edge(graph, e_id=None, label=None, properties=None):
     """
     drop all edges or specific edge
     :param graph: graph, type: GraphTraversalSource
+    :param e_id: edge id, type str
     :param label: label, type: str
     :param properties: property list, like ['p1', 'p2', {'p3': 'value'}]
     :return: None
     """
-    travel = graph.E()
+    travel = graph.E(e_id) if e_id else graph.E()
     if label:
         travel = travel.hasLabel(label)
     if properties:
@@ -97,9 +114,9 @@ def drop_edge(graph, label=None, properties=None):
     travel.drop().iterate()
 
 
-def query_id_list(graph, label=None):
+def query_vertex_id_list(graph, label=None):
     """
-    query id list
+    query vertex id list
     :param graph: graph, type: GraphTraversalSource
     :param label: label, type: str
     :return: long(id) list, like [long_id1, long_id2, long_id3]
@@ -108,6 +125,21 @@ def query_id_list(graph, label=None):
     if label:
         travel = travel.hasLabel(label)
     return travel.id().toList()
+
+
+def query_edge_id_list(graph, label=None):
+    """
+    query edge id list
+    :param graph: graph, type: GraphTraversalSource
+    :param label: label, type: str
+    :return: str(id) list, like ['id1', 'id2', 'id3']
+    """
+    travel = graph.E()
+    if label:
+        travel = travel.hasLabel(label)
+    temp_id_list = travel.id().toList()
+    id_list = list(map(lambda t: t.get('@value').get('relationId'), temp_id_list))
+    return id_list
 
 
 def query_vertex(graph, v_id=None, label=None, properties=None):
@@ -132,15 +164,16 @@ def query_vertex(graph, v_id=None, label=None, properties=None):
     return travel.valueMap().toList()
 
 
-def query_edge(graph, label=None, properties=None):
+def query_edge(graph, e_id=None, label=None, properties=None):
     """
-    query graph edge data list
+    query graph data list
     :param graph: graph, type: GraphTraversalSource
+    :param e_id: edge id, type str
     :param label: label, type: str
     :param properties: property list, like ['p1', 'p2', {'p3': 'value'}]
     :return: valueMap list
     """
-    travel = graph.E()
+    travel = graph.E(e_id) if e_id else graph.E()
     if label:
         travel = travel.hasLabel(label)
     if properties:
@@ -218,10 +251,12 @@ def get_all_edge_info(graph):
         like [{'outV': o_id, 'inV': i_id, 'property1': 'value', 'property2': 'value', ...}, {...}, {...}]
     """
     result = []
-    e_list = graph.E().toList()
-    for e in e_list:
-        edge_dict = {'outV': e.outV.id, 'inV': e.inV.id}
-        e_values = graph.V(e.outV).outE(e.label).valueMap().toList()
+    edge_id_list = graph.E().id().toList()
+    for edge_id in edge_id_list:
+        e_id = edge_id.get('@value').get('relationId')
+        out_v, in_v = graph.E(e_id).bothV().toList()
+        edge_dict = {'outV_id': out_v.id, 'inV_id': in_v.id}
+        e_values = graph.E(e_id).valueMap().toList()
         for value in e_values:
             edge_dict.update(value)
         result.append(edge_dict)
