@@ -1,3 +1,4 @@
+import multiprocessing
 import random
 import time
 
@@ -74,3 +75,18 @@ def download_file(file_url, filename, total=3):
             return download_file(file_url, filename, total - 1)
         return False
     return True
+
+
+def run_with_multiprocessing(url_list):
+    """
+    run craw job with multi-processes
+    :param url_list: target urls
+    :return: None
+    """
+    max_cpu_num = multiprocessing.cpu_count()
+    pool = multiprocessing.Pool(max_cpu_num - 2)
+    for url in url_list:
+        # craw_job_function should be defined first
+        pool.apply_async('craw_job_function', args=(url, 'arg1', 'arg2', ))
+    pool.close()
+    pool.join()
