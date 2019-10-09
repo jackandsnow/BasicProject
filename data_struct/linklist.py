@@ -192,10 +192,10 @@ class DoubleLinkList:
         """
         node = DoubleLinkNode(obj)
         prev_node = self.__tail.prev
-        prev_node.next = node
-        node.prev = prev_node
-        node.next = self.__tail
         self.__tail.prev = node
+        node.next = self.__tail
+        node.prev = prev_node
+        prev_node.next = node
 
     def insert(self, obj, index):
         """
@@ -285,16 +285,24 @@ class DoubleLinkList:
         if self.isEmpty() or self.length() == 1:
             return
 
-        prev = back = self.__tail
+        prev = self.__tail
         curr = self.__head.next
         while curr != self.__tail:
             back = curr.next
+            if back != self.__tail:
+                curr.prev = back
+            else:
+                # deal with head
+                curr.prev = self.__head
+                self.__head.next = curr
+
             curr.next = prev
-            curr.prev = back
+            # deal with tail
+            if prev == self.__tail:
+                self.__tail.prev = curr
             prev = curr
             curr = back
-        self.__head.next = prev
-        self.__tail.prev = back.prev
+        self.__head.prev = self.__tail.next = None
 
     def length(self):
         """
