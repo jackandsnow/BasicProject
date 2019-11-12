@@ -94,6 +94,12 @@ def run_with_multiprocessing(url_list):
 
 
 def download_paper(doi, filename=None):
+    """
+    Download paper by its doi
+    :param doi: paper's doi, like '10.1145/3292500.3330947'
+    :param filename: '/path/filename.pdf'
+    :return: None
+    """
     sci_hub = 'https://sci-hub.tw/'
     html_text = get_html_text(sci_hub + doi)
     if html_text:
