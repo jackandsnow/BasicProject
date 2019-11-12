@@ -3,6 +3,7 @@ import random
 import time
 
 import requests
+from lxml import etree
 
 agent = [
     'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.2pre) Gecko/20070215 K-Ninja/2.1.1',
@@ -87,6 +88,19 @@ def run_with_multiprocessing(url_list):
     pool = multiprocessing.Pool(max_cpu_num - 2)
     for url in url_list:
         # craw_job_function should be defined first
-        pool.apply_async('craw_job_function', args=(url, 'arg1', 'arg2', ))
+        pool.apply_async('craw_job_function', args=(url, 'arg1', 'arg2',))
     pool.close()
     pool.join()
+
+
+def download_paper(doi, filename=None):
+    sci_hub = 'https://sci-hub.tw/'
+    html_text = get_html_text(sci_hub + doi)
+    if html_text:
+        html = etree.HTML(html_text)
+        url = html.xpath('//div[@id="article"]/iframe/@src')[0]
+        url = url.replace('#view=FitH', '?download=true')
+        filename = filename if filename else url.split('?')[0].split('/')[-1]
+        flag = download_file('https:' + url, filename)
+        if not flag:
+            print('Download Paper DOI[' + doi + '] Failed!')
