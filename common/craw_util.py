@@ -107,8 +107,9 @@ def download_paper(doi, filename=None):
             html = etree.HTML(html_text)
             url = html.xpath('//div[@id="article"]/iframe/@src')[0]
             url = url.replace('#view=FitH', '?download=true')
+            url = url if url.contains('https:') else 'https:' + url
             filename = filename if filename else url.split('?')[0].split('/')[-1]
-            flag = download_file('https:' + url, filename)
+            flag = download_file(url, filename)
             if not flag:
                 print('Download Paper DOI[' + doi + '] Failed!')
     # Verification code skipped
